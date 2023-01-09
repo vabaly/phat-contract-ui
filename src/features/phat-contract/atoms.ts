@@ -122,13 +122,18 @@ export const onChainContractsAtom = atomWithQuery(get => {
   return queryContractList(api)
 })
 
+// 本地可用的 LocalContractInfo， availableContractsAtom 的取值是 [[string, LocalContractInfo]]
 export const availableContractsAtom = atom(get => {
   const onLocal = get(localContractsAtom)
   const onChain = get(onChainContractsAtom)
   const onChainKeys = Object.keys(onChain)
+  // 生成一个函数，执行函数时，从左往右执行参数中的函数
   return R.pipe(
+    // 函数参数，[[string, LocalContractInfo]]，过滤出 key 在 onChainKeys 中的 [string, LocalContractInfo]
     R.filter((i: Pairs<string, LocalContractInfo>) => R.includes(i[0], onChainKeys)),
+    // 函数参数，[[string, LocalContractInfo]]，排序
     R.sortBy((i) => R.propOr(0, 'savedAt', i[1])),
+    // [[string, LocalContractInfo]] 翻转
     lst => R.reverse<Pairs<string, LocalContractInfo>>(lst),
   )(Object.entries(onLocal))
 })

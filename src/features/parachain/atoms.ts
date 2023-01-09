@@ -110,6 +110,7 @@ export const apiPromiseAtom = atom(async (get) => {
     if (machine.value === 'connected') {
       return machine.context.connection!
     }
+    // 等待 500ms 进入下一个循环
     await new Promise(resolve => setTimeout(resolve, 500))
   }
 })
